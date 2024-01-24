@@ -11,14 +11,14 @@ public class SalaCinematografOperations {
     private static SalaCinematografController salaCinematografController = new SalaCinematografController();
     private static Scanner scanner = new Scanner(System.in);
 
-    private SalaCinematografOperations(){
+    private SalaCinematografOperations() {
     }
 
-    public static void salaCinematografOperations(){
+    public static void salaCinematografOperations() {
         System.out.println("Ce doresti sa faci?");
         String cmd = scanner.nextLine();
 
-        switch (cmd){
+        switch (cmd) {
             case "rezervare":
                 System.out.println("Care este numele dumneavoastra?");
                 String nume = scanner.nextLine();
@@ -26,19 +26,24 @@ public class SalaCinematografOperations {
                 System.out.println("Data rezervarii YYYY-MM-DD");
                 Date dataRezervare = Date.valueOf(scanner.nextLine());
                 LocalDate dataCurenta = LocalDate.now();
-                if(dataCurenta.isAfter(dataRezervare.toLocalDate())){
+                if (dataCurenta.isAfter(dataRezervare.toLocalDate())) {
                     System.out.println("Data la care se face rezervarea nu trebuie să fie mai mica decat data curenta");
                     break;
                 }
+
                 System.out.println("Ce film doriti sa vizionati?");
                 String film = scanner.nextLine();
 
                 System.out.println("Ce sala doriti?");
                 int numarSala = Integer.parseInt(scanner.nextLine());
-                if(salaCinematografController.verificareCapacitate(numarSala) < 21) {
-                    salaCinematografController.addRezervare(nume, dataRezervare, film, numarSala);
+                if (salaCinematografController.verificaRezervare(film, numarSala)) {
+                    if (salaCinematografController.verificareCapacitate(numarSala) < 21 && numarSala >= 1 && numarSala <= 9) {
+                        salaCinematografController.addRezervare(nume, dataRezervare, film, numarSala);
+                    } else {
+                        System.out.println("Nu mai sunt locuri libere!");
+                    }
                 } else {
-                    System.out.println("Nu mai sunt locuri libere!");
+                    System.out.println("In aceasta sala se difuzeaza alt film");
                 }
                 break;
 
@@ -59,6 +64,15 @@ public class SalaCinematografOperations {
                 salaCinematografController.stergeRezervare(Integer.parseInt(scanner.nextLine()));
                 System.out.println("Rezervarea a fost stearsa!");
                 break;
+
+            case "verif":
+                System.out.println("film");
+                String film1 = scanner.nextLine();
+                int numarSala2 = Integer.parseInt(scanner.nextLine());
+                boolean b = salaCinematografController.verificaRezervare(film1, numarSala2);
+                System.out.println(b);
         }
     }
 }
+
+//TODO REZERVARILE MERG DOAR PENTRU UN FILM PE SALA DOAR CA DACA NU AVEM NICIUN FILM IN SALA NU SE REZERVA NIMIC

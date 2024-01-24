@@ -11,26 +11,30 @@ public class SalaCinematografController {
 
     private SalaCinematografDao salaCinematografDao;
 
-    public SalaCinematografController(){
+    public SalaCinematografController() {
         salaCinematografDao = new SalaCinematografDao(ConnectionController.getInstance().getConnection());
     }
 
-    public void addRezervare(String nume, Date dataRezervare, String film, int numarSala){
+    public void addRezervare(String nume, Date dataRezervare, String film, int numarSala) {
         //Optional<SalaCinematograf> optional = salaCinematografDao.verificarecapacitate
 
-        salaCinematografDao.addRezervare(nume,dataRezervare,film,numarSala);
+        salaCinematografDao.addRezervare(nume, dataRezervare, film, numarSala);
         System.out.println("Rezervarea a fost efectuata");
     }
 
-    public List<String> afisareRezervari(String nume){
+    public List<String> afisareRezervari(String nume) {
         return salaCinematografDao.afisareRezervari(nume);
     }
 
-    public int verificareCapacitate(int numarSala){
+    public int verificareCapacitate(int numarSala) {
         return salaCinematografDao.verificareCapacitate(numarSala);
     }
 
-    public void stergeRezervare(int id){
+    public void stergeRezervare(int id) {
         salaCinematografDao.stergeRezervare(id);
+    }
+
+    public boolean verificaRezervare(String film, int numarSala) {
+        return salaCinematografDao.verificareFilm(film, numarSala);
     }
 }
