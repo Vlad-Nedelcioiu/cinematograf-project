@@ -1,9 +1,14 @@
 package dao;
 
 import model.SalaCinematograf;
-import view.SalaCinematografOperations;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.sql.*;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,6 +20,8 @@ public class SalaCinematografDao {
     private PreparedStatement stergeRezervare;
     private PreparedStatement verificareFilm;
 
+    private PreparedStatement salvareRezervariInFisier;
+
     public SalaCinematografDao(Connection connection) {
         this.connection = connection;
 
@@ -24,6 +31,7 @@ public class SalaCinematografDao {
             verificareCapacitate = connection.prepareStatement("SELECT * FROM rezervari WHERE numarSala = ?");
             stergeRezervare = connection.prepareStatement("DELETE FROM rezervari WHERE id = ?");
             verificareFilm = connection.prepareStatement("SELECT film, numarSala FROM rezervari WHERE film = ? AND numarSala = ?");
+            salvareRezervariInFisier = connection.prepareStatement("SELECT nume, dataRezervare, film FROM rezervari");
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -84,11 +92,12 @@ public class SalaCinematografDao {
         }
     }
 
-    public boolean verificareFilm(String film, int numarSala) {
+    public boolean verificareRezervare(String film, int numarSala) {
         try {
             verificareFilm.setString(1, film);
             verificareFilm.setInt(2, numarSala);
             ResultSet resultSet = verificareFilm.executeQuery();
+
             if (resultSet.next()) {
                 return true;
             }
@@ -98,4 +107,30 @@ public class SalaCinematografDao {
         return false;
     }
 
+    public void salvareRezervariInFisier() {
+        try {
+            ResultSet resultSet = salvareRezervariInFisier.executeQuery();
+
+            File file = new File("src/salvareRezervare/fisier.txt");
+            try (FileWriter fileWriter = new FileWriter(file.getAbsoluteFile());
+                 BufferedWriter bufferedWriter = new BufferedWriter(fileWriter)) {
+
+                bufferedWriter.write("Salvare: " + (LocalDate.now()) + " " + LocalTime.now() + "\n");
+                bufferedWriter.write("\n");
+                while (resultSet.next()) {
+                    bufferedWriter.write(("Nume:" + resultSet.getString("nume") + "\n"));
+                    bufferedWriter.write("Data rezervare: " +((resultSet.getDate("dataRezervare") + "\n")));
+                    bufferedWriter.write(("Film: " + resultSet.getString("film")  + "\n"));
+                    bufferedWriter.write("\n");
+                }
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
 }

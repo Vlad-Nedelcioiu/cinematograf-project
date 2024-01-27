@@ -1,11 +1,10 @@
 package controller;
 
 import dao.SalaCinematografDao;
-import model.SalaCinematograf;
 
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 public class SalaCinematografController {
 
@@ -16,10 +15,26 @@ public class SalaCinematografController {
     }
 
     public void addRezervare(String nume, Date dataRezervare, String film, int numarSala) {
-        //Optional<SalaCinematograf> optional = salaCinematografDao.verificarecapacitate
 
-        salaCinematografDao.addRezervare(nume, dataRezervare, film, numarSala);
-        System.out.println("Rezervarea a fost efectuata");
+        LocalDate dataCurenta = LocalDate.now();
+        if (dataCurenta.isAfter(dataRezervare.toLocalDate())) {
+            throw new RuntimeException("DataIncorecta");
+        }
+
+        if (numarSala >= 1 && numarSala <= 9) {
+            if (verificareCapacitate(numarSala) < 21) {
+                if (verificaRezervare(film, numarSala)) {
+                    salaCinematografDao.addRezervare(nume, dataRezervare, film, numarSala);
+                } else {
+                    throw new RuntimeException("InAceastaSalaSeDifuzeazaAltFilm");
+                }
+            } else {
+                throw new RuntimeException("NuMaiSuntLocuriLibere");
+            }
+        } else {
+            throw new RuntimeException("SalaNuExista");
+        }
+
     }
 
     public List<String> afisareRezervari(String nume) {
@@ -30,11 +45,15 @@ public class SalaCinematografController {
         return salaCinematografDao.verificareCapacitate(numarSala);
     }
 
-    public void stergeRezervare(int id) {
-        salaCinematografDao.stergeRezervare(id);
+    public boolean verificaRezervare(String film, int numarSala) {
+        return salaCinematografDao.verificareRezervare(film, numarSala);
     }
 
-    public boolean verificaRezervare(String film, int numarSala) {
-        return salaCinematografDao.verificareFilm(film, numarSala);
+    public void salvareRezervariInFisier(){
+        salaCinematografDao.salvareRezervariInFisier();
+    }
+
+    public void stergeRezervare(int id) {
+        salaCinematografDao.stergeRezervare(id);
     }
 }

@@ -1,0 +1,18 @@
+Salvare: 2024-01-27 18:55:54.225941400
+
+Nume:Maria
+Data rezervare: 2024-04-25
+Film: Top Gun 2
+
+Nume:Matei
+Data rezervare: 2024-03-12
+Film: Transformers
+
+Nume:Vlad
+Data rezervare: 2024-03-12
+Film: Top Gun 2
+
+Nume:Marian
+Data rezervare: 2024-03-21
+Film: Transformers
+
