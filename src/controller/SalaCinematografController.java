@@ -25,6 +25,8 @@ public class SalaCinematografController {
             if (verificareCapacitate(numarSala) < 21) {
                 if (verificaRezervare(film, numarSala)) {
                     salaCinematografDao.addRezervare(nume, dataRezervare, film, numarSala);
+                } else if(!salaCinematografDao.verificareSala(numarSala)){
+                    salaCinematografDao.addRezervare(nume, dataRezervare, film, numarSala);
                 } else {
                     throw new RuntimeException("InAceastaSalaSeDifuzeazaAltFilm");
                 }

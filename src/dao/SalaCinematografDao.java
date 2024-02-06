@@ -19,6 +19,7 @@ public class SalaCinematografDao {
     private PreparedStatement verificareCapacitate;
     private PreparedStatement stergeRezervare;
     private PreparedStatement verificareFilm;
+    private PreparedStatement verificareSala;
 
     private PreparedStatement salvareRezervariInFisier;
 
@@ -32,6 +33,7 @@ public class SalaCinematografDao {
             stergeRezervare = connection.prepareStatement("DELETE FROM rezervari WHERE id = ?");
             verificareFilm = connection.prepareStatement("SELECT film, numarSala FROM rezervari WHERE film = ? AND numarSala = ?");
             salvareRezervariInFisier = connection.prepareStatement("SELECT nume, dataRezervare, film FROM rezervari");
+            verificareSala = connection.prepareStatement("SELECT numarSala FROM rezervari WHERE numarSala = ?");
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -43,7 +45,6 @@ public class SalaCinematografDao {
             rezervare.setDate(2, dataRezervare);
             rezervare.setString(3, film);
             rezervare.setInt(4, numarSala);
-
             rezervare.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -103,6 +104,19 @@ public class SalaCinematografDao {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean verificareSala(int numarSala){
+        try {
+            verificareCapacitate.setInt(1, numarSala);
+            ResultSet resultSet = verificareCapacitate.executeQuery();
+            if (resultSet.next()) {
+                return true;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
         return false;
     }
